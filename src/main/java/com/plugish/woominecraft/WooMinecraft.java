@@ -33,12 +33,8 @@ import java.util.List;
 public final class WooMinecraft extends JavaPlugin {
 
 	public static WooMinecraft instance;
-	public String lang = "en";
 
-	public YamlConfiguration l10n;
-	public YamlConfiguration config;
-
-	public static BukkitRunner scheduler;
+	private YamlConfiguration l10n;
 
 	public final String restBase = "wp-json/woominecraft/v1/server/";
 
@@ -47,7 +43,7 @@ public final class WooMinecraft extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		this.config = ( YamlConfiguration ) getConfig();
+		YamlConfiguration config = (YamlConfiguration) getConfig();
 
 		// Save the default config.yml
 		try{
@@ -79,10 +75,9 @@ public final class WooMinecraft extends JavaPlugin {
 			return;
 		}
 
-		this.lang = getConfig().getString( "lang" );
+		String lang = getConfig().getString("lang");
 		if ( lang == null ) {
 			getLogger().warning( "No default l10n set, setting to english." );
-			this.lang = "en";
 		}
 
 		// Initialize commands
@@ -138,9 +133,9 @@ public final class WooMinecraft extends JavaPlugin {
 	 * Multiple reports of user configs not having keys etc... so this will ensure they know of this
 	 * and will not allow checks to continue if the required data isn't set in the config.
 	 *
-	 * @throws Exception
+	 * @throws Exception Reason for failing to validate the config.
 	 */
-	public void validateConfig() throws Exception {
+	private void validateConfig() throws Exception {
 
 		if ( 1 > this.getConfig().getString( "url" ).length() ) {
 			throw new Exception( "Server URL is empty, check config." );
@@ -254,11 +249,7 @@ public final class WooMinecraft extends JavaPlugin {
 		this.wmc_log( message, 1 );
 	}
 
-	public void wmc_log( Exception message ) {
-		this.wmc_log( message.getMessage(), 3 );
-	}
-
-	public void wmc_log( String message, Integer level ) {
+	private void wmc_log(String message, Integer level) {
 
 		if ( ! this.getConfig().getBoolean( "debug" ) ) {
 			return;
@@ -280,7 +271,7 @@ public final class WooMinecraft extends JavaPlugin {
 	/**
 	 * Initialize Commands
 	 */
-	public void initCommands() {
+	private void initCommands() {
 		getCommand( "woo" ).setExecutor( new WooCommand() );
 	}
 }
