@@ -36,9 +36,7 @@ public final class WooMinecraft extends JavaPlugin {
 
 	private YamlConfiguration l10n;
 
-	public final String restBase = "wp-json/woominecraft/v1/server/";
-
-	public String serverEndpoint;
+	private String serverEndpoint;
 
 	@Override
 	public void onEnable() {
@@ -90,7 +88,7 @@ public final class WooMinecraft extends JavaPlugin {
 
 		BukkitScheduler scheduler = getServer().getScheduler();
 		Integer i = config.getInt( "update_interval" ) * 20;
-		Long interval = Long.valueOf( i );
+		long interval = Long.valueOf( i );
 		scheduler.runTaskTimerAsynchronously( this, new Runnable() {
 			@Override
 			public void run() {
@@ -154,14 +152,14 @@ public final class WooMinecraft extends JavaPlugin {
 	 * Ensures the URL provided in the config has access to the WP-JSON endpoint.
 	 *
 	 * @return True if the app has access to wp-json/
-	 * @throws Exception
+	 * @throws Exception Throws a bubbled exception from child calls.
 	 */
-	public Boolean urlIsValidJSON() throws Exception {
+	private Boolean urlIsValidJSON() throws Exception {
 		Client client = ClientBuilder.newClient();
 		Response response = client.target( getServerUrl().toString() ).request().get();
 		MediaType contentType = response.getMediaType();
 
-		Boolean isValid = false;
+		boolean isValid = false;
 
 		if ( contentType.getType().equals( MediaType.APPLICATION_JSON_TYPE.getType() )
 			&& contentType.getSubtype().equals( MediaType.APPLICATION_JSON_TYPE.getSubtype() )
@@ -184,12 +182,13 @@ public final class WooMinecraft extends JavaPlugin {
 		String key = getConfig().getString( "key" );
 		String path = uri.getPath();
 
+		String restBase = "wp-json/woominecraft/v1/server/";
 		if ( null == path || path.length() == 0 ) {
-			path = "/" + this.restBase;
+			path = "/" + restBase;
 		} else if ( path.charAt( path.length() - 1 ) == '/' ) {
-			path = path + this.restBase;
+			path = path + restBase;
 		} else {
-			path = path + "/" + this.restBase;
+			path = path + "/" + restBase;
 		}
 
 
@@ -245,7 +244,7 @@ public final class WooMinecraft extends JavaPlugin {
 		}
 	}
 
-	public void wmc_log( String message ) {
+	private void wmc_log(String message) {
 		this.wmc_log( message, 1 );
 	}
 
